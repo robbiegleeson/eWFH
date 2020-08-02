@@ -50,7 +50,7 @@ function ProfileScreen({ navigation }) {
   }
 
   const setDaysForMonth = (number, month) => {
-    const monthToUpdateIndex = MONTH_NAMESs.findIndex(item => item === month);
+    const monthToUpdateIndex = MONTH_NAMES.findIndex(item => item === month);
     const listCopy = [...daysPerMonthList];
     listCopy[monthToUpdateIndex] = number;
     setDaysPerMonthList(listCopy)
