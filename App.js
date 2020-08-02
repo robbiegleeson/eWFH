@@ -14,25 +14,25 @@ import theme from './src/theme';
 const Drawer = createDrawerNavigator();
 
 export default function App() {
-  const{ isLoading } = useInitUser();
+  // const{ isLoading } = useInitUser();
 
-  if (isLoading) {
-    return (
-      <View style={{
-        position: 'absolute',
-        top: 0, 
-        left: 0,
-        bottom: 0,
-        right: 0,
-        backgroundColor: '#E5E7E9',
-        display: 'flex'
-      }}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator animating={true} color="#3498db" />
-        </View>
-      </View>
-    )
-  }
+  // if (isLoading) {
+  //   return (
+  //     <View style={{
+  //       position: 'absolute',
+  //       top: 0, 
+  //       left: 0,
+  //       bottom: 0,
+  //       right: 0,
+  //       backgroundColor: '#E5E7E9',
+  //       display: 'flex'
+  //     }}>
+  //       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  //         <ActivityIndicator animating={true} color="#3498db" />
+  //       </View>
+  //     </View>
+  //   )
+  // }
 
   return (
     <PaperProvider theme={theme}>

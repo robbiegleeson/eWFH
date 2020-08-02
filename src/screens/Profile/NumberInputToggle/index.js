@@ -11,13 +11,13 @@ const NumberInputToggle = ({ month, value, action }) => {
         <Text>{month}</Text>
       </View>
       <View style={{ flex: 1, alignItems: 'center' }}>
-        <IconButton size={20} icon="minus" color={colors.white} style={{ backgroundColor: colors.primary}} onPress={() => action(value + 0.5, month)} />
+        <IconButton size={20} icon="minus" color={colors.white} style={{ backgroundColor: colors.primary}} onPress={() => action(value - 0.5, month)} />
       </View>
       <View style={{ flex: 2, alignItems: 'center' }}>
         <Text>{value}</Text>
       </View>
       <View style={{ flex: 1, alignItems: 'center' }}>
-        <IconButton size={20} icon="plus" color={colors.white} style={{ backgroundColor: colors.primary}} onPress={() => action(value - 0.5, month)} />
+        <IconButton size={20} icon="plus" color={colors.white} style={{ backgroundColor: colors.primary}} onPress={() => action(value + 0.5, month)} />
       </View>
     </View>
   )

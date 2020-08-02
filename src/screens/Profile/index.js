@@ -1,22 +1,60 @@
 import React, { useState, useEffect } from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform, ScrollView } from 'react-native';
 import { Text, IconButton, ActivityIndicator, useTheme } from 'react-native-paper';
 
 import Header from '../../components/Header';
 import { MONTH_NAMES } from '../../utils/monthNamesEnum';
+import AsyncStorage from '@react-native-community/async-storage';
 import NumberInputToggle from './NumberInputToggle';
-import useGetUserSettings from '../../hooks/useGetUserSettings';
 
 function ProfileScreen({ navigation }) {
-  const { colors } = useTheme();
-  const { root } = useTheme();
-  const { isLoading, userSettings } = useGetUserSettings();
+  const { colors, root } = useTheme();
   const [hoursPerDay, setHoursPerDay] = useState();
+  const [daysPerMonthList, setDaysPerMonthList] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log(userSettings)
-    setHoursPerDay(userSettings?.hoursPerDay);
+    const getUserSettings = async () => {
+      setIsLoading(true);
+      const valueString = await AsyncStorage.getItem('@userSettings');
+      const settings = JSON.parse(valueString);
+
+      if (settings) {
+        setHoursPerDay(settings?.hoursPerDay);
+        setDaysPerMonthList(settings?.daysPerMonthList)
+        setIsLoading(false);
+      } else {
+        alert('made it')
+      }
+    };
+    
+    getUserSettings();
   }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{
+        position: 'absolute',
+        top: 0, 
+        left: 0,
+        bottom: 0,
+        right: 0,
+        backgroundColor: '#E5E7E9',
+        display: 'flex'
+      }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator animating={true} color="#3498db" />
+        </View>
+      </View>
+    )
+  }
+
+  const setDaysForMonth = (number, month) => {
+    const monthToUpdateIndex = MONTH_NAMESs.findIndex(item => item === month);
+    const listCopy = [...daysPerMonthList];
+    listCopy[monthToUpdateIndex] = number;
+    setDaysPerMonthList(listCopy)
+  }
 
   return (
     <View style={root}>
@@ -37,7 +75,18 @@ function ProfileScreen({ navigation }) {
           </View>
         </View>
         <Text style={{ alignSelf: 'flex-start', padding: 10, paddingLeft: 5 }}>Days WFH By Month</Text>
-        {/* {MONTH_NAMES.map((month, i) => <NumberInputToggle action={setDaysForMonth} month={month} value={daysPerMonthList[i]} />)} */}
+        <ScrollView style={{ width: '100%' }}>
+          {MONTH_NAMES.map((month, i) => {
+            console.log(isLoading)
+            console.log(daysPerMonthList)
+            const val = daysPerMonthList[i];
+            return (
+              <NumberInputToggle action={(val) => {
+                setDaysForMonth(val, month)
+              }} month={month} value={val} />
+            );
+          })}
+        </ScrollView>
       </View>
     </View>
   );

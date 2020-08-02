@@ -2,29 +2,30 @@ import react, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const useGetUserSettings = () => {
-  try {
-    const [userSettings, setUserSettings] = useState();
-    const [isLoading, setIsLoading] = useState(false);
-  
-    useEffect(() => {
-      const getUserSettings = async () => {
-        setIsLoading(true);
-        const valueString = await AsyncStorage.getItem('@userSettings');
-        const settings = JSON.parse(valueString);
+  const [hoursPerDay, setHoursPerDay] = useState(0);
+  const [daysPerMonthList, setDaysPerMonthList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState();
 
-        console.log(settings)
-  
-        setUserSettings(settings);
+  useEffect(() => {
+    const getUserSettings = async () => {
+      setIsLoading(true);
+      const valueString = await AsyncStorage.getItem('@userSettings');
+      const settings = JSON.parse(valueString);
+
+      if (settings) {
+        setHoursPerDay(settings?.hoursPerDay);
+        setDaysPerMonthList(settings?.daysPerMonthList)
         setIsLoading(false);
-      };
-      
-      getUserSettings();
-    }, []);
-  
-    return { userSettings, isLoading }
-  } catch (e) {
-    console.log(e.message)
-  }
+      } else {
+        setErrorMessage('No settings saved. Please update your profile.')
+      }
+    };
+    
+    getUserSettings();
+  }, []);
+
+  return { isLoading, daysPerMonthList, hoursPerDay, errorMessage };
 }
 
 export default useGetUserSettings;
