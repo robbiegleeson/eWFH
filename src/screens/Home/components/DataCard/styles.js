@@ -6,26 +6,30 @@ const getStyles = () => {
 
   const styles = {
     container: {
-      backgroundColor: colors.primary,
+      backgroundColor: colors.white,
       padding: 10,
       width: '100%',
-      borderRadius: 10,
-      marginVertical: 10,
+      borderRadius: 20,
+      marginTop: 15,
       ...shadow,
+      // minHeight: 50
     },
     providerText: {
-      color: colors.white,
-      fontSize: 16,
+      color: '#000',
+      fontSize: 23,
+      fontFamily: 'SourceSansPro',
+      lineHeight: 33,
+      fontWeight: '200'
     },
     amountText: {
-      color: colors.white,
-      fontSize: 12,
-      fontStyle: 'italic',
+      fontSize: 15,
+      fontFamily: 'SourceSansPro',
     },
     calculatedTotalText: {
-      color: colors.white,
-      fontSize: 18,
-      marginRight: 10,
+      fontSize: 23,
+      fontFamily: 'SourceSansProBold',
+      // marginRight: 10,
+      color: '#1689FC'
     },
     colors: {
       ...colors

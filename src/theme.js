@@ -20,10 +20,12 @@ const theme = {
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 3
+      height: 5,
     },
-    shadowRadius: 2,
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.2,
+    shadowRadius: 3.84,
+
+    elevation: 5,
   },
   root: {
     position: 'absolute',
@@ -31,8 +33,13 @@ const theme = {
     left: 0,
     bottom: 0,
     right: 0,
-    backgroundColor: '#E5E7E9',
+    backgroundColor: 'transparent',
   },
+  image: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center"
+  }
 };
 
 export default theme;
