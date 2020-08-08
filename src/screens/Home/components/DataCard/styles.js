@@ -18,7 +18,7 @@ const getStyles = () => {
       color: '#000',
       fontSize: 23,
       fontFamily: 'SourceSansPro',
-      lineHeight: 33,
+      // lineHeight: 33,
       fontWeight: '200'
     },
     amountText: {

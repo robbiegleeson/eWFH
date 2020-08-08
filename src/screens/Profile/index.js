@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Platform, ScrollView } from 'react-native';
+import { View, Platform, ScrollView, ImageBackground } from 'react-native';
 import { Text, FAB, ActivityIndicator, useTheme, Dialog, Portal, Paragraph, Button, Appbar } from 'react-native-paper';
 
 import Header from '../../components/Header';
@@ -8,11 +8,12 @@ import AsyncStorage from '@react-native-community/async-storage';
 import NumberInputToggle from './NumberInputToggle';
 
 function ProfileScreen({ navigation }) {
-  const { colors, root, shadow } = useTheme();
+  const { colors, root, image } = useTheme();
   const [hoursPerDay, setHoursPerDay] = useState();
   const [daysPerMonthList, setDaysPerMonthList] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const img = require('../../../assets/app-background.png');
 
   useEffect(() => {
     const getUserSettings = async () => {
@@ -25,7 +26,9 @@ function ProfileScreen({ navigation }) {
         setDaysPerMonthList(settings?.daysPerMonthList)
         setIsLoading(false);
       } else {
-        alert('made it')
+        setHoursPerDay(8);
+        setDaysPerMonthList([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        setIsLoading(false);
       }
     };
     
@@ -76,16 +79,31 @@ function ProfileScreen({ navigation }) {
 
   return (
     <View style={root}>
-      <Portal>
-        <Dialog visible={isModalOpen} onDismiss={() => setIsModalOpen(false)}>
-          <Dialog.Title>Success</Dialog.Title>
-          <Dialog.Actions>
-            <Button onPress={() => setIsModalOpen(false)}>Ok!</Button>
-          </Dialog.Actions>
-        </Dialog>
+      <ImageBackground resizeMode="stretch" source={img} style={image}>
+        <Portal>
+          <Dialog visible={isModalOpen} onDismiss={() => setIsModalOpen(false)}>
+            <Dialog.Title>Success</Dialog.Title>
+            <Dialog.Actions>
+              <Button onPress={() => setIsModalOpen(false)}>Ok!</Button>
+            </Dialog.Actions>
+          </Dialog>
         </Portal>
-        <Header leftAction={<Appbar.Action color="#FFF" icon="arrow-left" onPress={() => navigation.goBack()} />} title="My Profile" />
-        <View style={{ flex: 1, alignItems: 'center', padding: 10 }}>
+        <Header
+        rightAction={<FAB
+          color={colors.white}
+          style={{
+            // position: 'absolute',
+            // margin: 16,
+            // right: -10,
+            // top: Platform.OS === 'android' ? 30 : 20,
+            backgroundColor: 'transparent'
+          }}
+          icon="content-save"
+          onPress={() => saveProfile()}
+        />}
+          leftAction={<Appbar.Action color={colors.white} icon="arrow-left" onPress={() => navigation.goBack()} />}
+        />
+        <View style={{ flex: 6, alignItems: 'center', padding: 10 }}>
           <NumberInputToggle month="Hours Per Day" action={(val) => {
               saveHoursPerDay(val)
             }} value={hoursPerDay} />
@@ -101,19 +119,7 @@ function ProfileScreen({ navigation }) {
             })}
           </ScrollView>
         </View>
-        <FAB
-          color={colors.white}
-          style={{
-            position: 'absolute',
-            margin: 16,
-            right: 0,
-            bottom: 0,
-            backgroundColor: colors.primary
-          }}
-          small
-          icon="content-save"
-          onPress={() => saveProfile()}
-        />
+      </ImageBackground>
     </View>
   );
 }

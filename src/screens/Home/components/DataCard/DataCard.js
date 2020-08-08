@@ -1,19 +1,18 @@
 import React from 'react';
 import { View, TouchableHighlight, Image } from 'react-native';
-import { Avatar, Text } from 'react-native-paper';
+import { Avatar, Text, Appbar } from 'react-native-paper';
 
 import Swipeable from 'react-native-swipeable';
 
 import getStyles from './styles.js';
 
-const DataCard = ({ provider, type, amount, calculatedTotal }) => {
+const DataCard = ({ provider, type, amount, calculatedTotal, removeBill, id }) => {
   const styles = getStyles();
 
   const leftContent = <View style={{ backgroundColor: 'red', marginVertical: 5, flexGrow: 1, justifyContent: 'center' }}><Avatar.Icon style={{ alignSelf: 'flex-end', backgroundColor: 'red' }} size={30} icon="delete" color={styles.colors.white} /></View>;
 
   const rightButtons = [
-    <View style={{ marginHorizontal: 20 }}><TouchableHighlight style={{ textAlign: 'center', position: 'absolute', left: 0, top: 40 }}><Avatar.Icon size={30} icon="folder" color={styles.colors.white} /></TouchableHighlight></View>,
-    // <TouchableHighlight><Text>Button 2</Text></TouchableHighlight>
+    <View style={{ marginHorizontal: 20 }}><TouchableHighlight onPress={() => removeBill(id)} style={{ textAlign: 'center', position: 'absolute', left: 0, top: 40 }}><Image style={{ width: 44, height: 44 }} source={require('../../../../../assets/trash.png')} /></TouchableHighlight></View>,
   ];
 
   const getProviderLogo = (item) => {
@@ -50,7 +49,7 @@ const DataCard = ({ provider, type, amount, calculatedTotal }) => {
   }
 
   return (
-    <Swipeable style={{ marginHorizontal: 20 }} rightButtons={rightButtons}>
+    <Swipeable style={{ marginVertical: 5, marginHorizontal: 20 }} rightButtons={rightButtons}>
       <View style={styles.container}>
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flex: 2, justifyContent: 'center', alignItems: 'center' }}>
@@ -62,8 +61,6 @@ const DataCard = ({ provider, type, amount, calculatedTotal }) => {
           </View>
           <View style={{ flex: 3, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
             <Text style={styles.calculatedTotalText}>{`€${calculatedTotal}`}</Text>
-            {/* <Avatar.Icon size={30} icon="delete" color={styles.colors.white} />
-            <Avatar.Icon size={30} icon="pen" color={styles.colors.white} /> */}
           </View>
         </View>
       </View>
