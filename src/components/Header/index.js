@@ -12,7 +12,7 @@ const Header = ({ leftAction = <Appbar.Action />, rightAction = <Appbar.Action /
   const _handleMore = () => console.log('Shown more');
 
   return (
-    <View style={{ flex: 2, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
       <View style={{ position: 'absolute', left: 10, top: Platform.OS === 'android' ? 30 : 40 }}>
         {leftAction}
       </View>

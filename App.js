@@ -1,11 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, StatusBar } from 'react-native';
+import { StyleSheet, View, StatusBar, Text, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Provider as PaperProvider, ActivityIndicator, Snackbar } from 'react-native-paper';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerListItem, DrawerItem } from '@react-navigation/drawer';
+import { Provider as PaperProvider, ActivityIndicator, Snackbar, List } from 'react-native-paper';
 import { useFonts } from 'expo-font'
-
-import useInitUser from './src/hooks/useInitUser';
 
 import HomeScreen from './src/screens/Home';
 import ProfileScreen from './src/screens/Profile';
@@ -42,11 +40,65 @@ export default function App() {
     )
   }
 
+  function CustomDrawerContent(props) {
+    return (
+      <DrawerContentScrollView {...props}>
+        <DrawerListItem {...props} />
+        <DrawerItem
+          label="Help"
+          onPress={() => Linking.openURL('https://mywebsite.com/help')}
+          labelStyle={{ color: '#FFF'}}
+        />
+      </DrawerContentScrollView>
+    );
+  }
+
   return (
     <PaperProvider theme={theme}>
       <NavigationContainer>
-        <StatusBar hidden />
-        <Drawer.Navigator initialRouteName="Home">
+        <Drawer.Navigator
+          initialRouteName="Home"
+          // hideStatusBar
+          drawerStyle={{
+            // backgroundColor: '#c6cbef',
+            borderTopRightRadius: 60,
+            borderBottomRightRadius: 60
+          }}
+          drawerContent={({ navigation }) => {
+            return (
+              <>
+                <View style={{ flex: 2, justifyContent: 'center', alignItems: 'center' }}>
+                  <View>
+                    <Image source={require('./assets/drawerIcon.png')} />
+                  </View>
+                </View>
+                <View style={{ flex: 3 }}>
+                  <List.Item
+                    title="Home"
+                    left={props => <List.Icon {...props} color="#1689FC" size={10} icon={require('./assets/profileIcon.png')} />}
+                    // right={props => <List.Icon {...props} icon={require('./assets/caret-right.png')}/>}
+                    style={{ fontSize: 16, borderBottomWidth: 0.5, borderBottomColor: '#1689FC'}}
+                    onPress={() => navigation.navigate('Home')}
+                  />
+                  <List.Item
+                    title="My Profile"
+                    left={props => <List.Icon {...props} color="#1689FC" size={10} icon="settings" />}
+                    // right={props => <List.Icon {...props} icon={require('./assets/caret-right.png')}/>}
+                    style={{ fontSize: 16, borderBottomWidth: 0.5, borderBottomColor: '#1689FC'}}
+                    onPress={() => navigation.navigate('Profile')}
+                  />
+                  <List.Item
+                    title="About"
+                    left={props => <List.Icon {...props} color="#1689FC" size={10} icon="information" />}
+                    // right={props => <List.Icon {...props} icon={require('./assets/caret-right.png')}/>}
+                    style={{ fontSize: 16, borderBottomWidth: 0.5, borderBottomColor: '#1689FC'}}
+                    onPress={() => navigation.navigate('About')}
+                  />
+                </View>
+              </>
+            )
+          }}
+        >
           <Drawer.Screen
             name="Home"
             component={HomeScreen}

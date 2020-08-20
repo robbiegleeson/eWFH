@@ -16,7 +16,7 @@ const getStyles = () => {
     },
     providerText: {
       color: '#000',
-      fontSize: 23,
+      fontSize: 18,
       fontFamily: 'SourceSansPro',
       // lineHeight: 33,
       fontWeight: '200'
@@ -29,7 +29,7 @@ const getStyles = () => {
       fontSize: 23,
       fontFamily: 'SourceSansProBold',
       // marginRight: 10,
-      color: '#1689FC'
+      // color: '#1689FC'
     },
     colors: {
       ...colors

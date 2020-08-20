@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { View, TextInput } from 'react-native';
 import { Text, IconButton, useTheme, ActivityIndicator } from 'react-native-paper';
 
 const NumberInputToggle = ({ month, value, action }) => {
@@ -13,7 +13,7 @@ const NumberInputToggle = ({ month, value, action }) => {
   }
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', padding: 10, borderRadius: 10, marginBottom: 10, ...shadow }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', padding: 10, borderRadius: 10, marginBottom: 10, ...shadow, marginHorizontal: 20}}>
       <View style={{ flex: 3, alignItems: 'flex-start' }}>
         <Text>{month}</Text>
       </View>

@@ -1,24 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { View, Platform, ScrollView, ImageBackground } from 'react-native';
-import { Text, FAB, ActivityIndicator, useTheme, Dialog, Portal, Paragraph, Button, Appbar } from 'react-native-paper';
+import { Text, FAB, ActivityIndicator, useTheme, Dialog, Portal, Switch, Button, Appbar, List, Snackbar } from 'react-native-paper';
+import moment from 'moment';
 
 import Header from '../../components/Header';
 import { MONTH_NAMES } from '../../utils/monthNamesEnum';
 import AsyncStorage from '@react-native-community/async-storage';
 import NumberInputToggle from './NumberInputToggle';
+import DateToggle from '../../components/DateToggle';
 
 function ProfileScreen({ navigation }) {
-  const { colors, root, image } = useTheme();
+  const { colors, root, image, shadow } = useTheme();
   const [hoursPerDay, setHoursPerDay] = useState();
   const [daysPerMonthList, setDaysPerMonthList] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(moment());
+  const [key, setKey] = useState(`@${moment().year()}-settings`)
+
   const img = require('../../../assets/app-background.png');
 
   useEffect(() => {
     const getUserSettings = async () => {
       setIsLoading(true);
-      const valueString = await AsyncStorage.getItem('@userSettings');
+      const valueString = await AsyncStorage.getItem(key);
       const settings = JSON.parse(valueString);
 
       if (settings) {
@@ -26,14 +31,14 @@ function ProfileScreen({ navigation }) {
         setDaysPerMonthList(settings?.daysPerMonthList)
         setIsLoading(false);
       } else {
-        setHoursPerDay(8);
+        setHoursPerDay(0);
         setDaysPerMonthList([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         setIsLoading(false);
       }
     };
     
     getUserSettings();
-  }, []);
+  }, [key]);
 
   if (isLoading) {
     return (
@@ -59,10 +64,10 @@ function ProfileScreen({ navigation }) {
       daysPerMonthList,
     }
 
-    AsyncStorage.setItem('@userSettings', JSON.stringify(settings))
+    AsyncStorage.setItem(key, JSON.stringify(settings))
       .then(() => {
-        console.log(settings)
         setIsModalOpen(true);
+        navigation.navigate('Home');
       })
   }
 
@@ -81,34 +86,33 @@ function ProfileScreen({ navigation }) {
     <View style={root}>
       <ImageBackground resizeMode="stretch" source={img} style={image}>
         <Portal>
-          <Dialog visible={isModalOpen} onDismiss={() => setIsModalOpen(false)}>
-            <Dialog.Title>Success</Dialog.Title>
-            <Dialog.Actions>
-              <Button onPress={() => setIsModalOpen(false)}>Ok!</Button>
-            </Dialog.Actions>
-          </Dialog>
+          <Snackbar
+            theme={{ colors: { accent: '#FFF' }}}
+            style={{ backgroundColor: '#1689FC'}}
+            visible={isModalOpen}
+            onDismiss={() => setIsModalOpen(false)}
+            action={{
+              label: 'Ok!',
+              onPress: () => {
+                setIsModalOpen(false);
+              },
+            }}>
+            Profile Updated!
+          </Snackbar>
         </Portal>
         <Header
-        rightAction={<FAB
-          color={colors.white}
-          style={{
-            // position: 'absolute',
-            // margin: 16,
-            // right: -10,
-            // top: Platform.OS === 'android' ? 30 : 20,
-            backgroundColor: 'transparent'
-          }}
-          icon="content-save"
-          onPress={() => saveProfile()}
-        />}
           leftAction={<Appbar.Action color={colors.white} icon="arrow-left" onPress={() => navigation.goBack()} />}
         />
-        <View style={{ flex: 6, alignItems: 'center', padding: 10 }}>
+        <View style={{  flex: 4, backgroundColor: '#FFF', borderRadius: 20 }}>
+          <DateToggle selectedDate={selectedDate} setSelectedDate={(date) => {
+            setKey(`@${date.year()}-settings`)
+            setSelectedDate(date);
+          }} />
           <NumberInputToggle month="Hours Per Day" action={(val) => {
-              saveHoursPerDay(val)
-            }} value={hoursPerDay} />
-          <Text style={{ alignSelf: 'flex-start', padding: 10, paddingLeft: 5 }}>Days WFH By Month</Text>
-          <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}>
+            saveHoursPerDay(val)
+          }} value={hoursPerDay} />
+          <ScrollView>
+            <Text style={{ alignSelf: 'flex-start', padding: 10, paddingLeft: 5, marginHorizontal: 20 }}>Days WFH By Month</Text>
             {MONTH_NAMES.map((month, i) => {
               const val = daysPerMonthList[i];
               return (
@@ -119,6 +123,7 @@ function ProfileScreen({ navigation }) {
             })}
           </ScrollView>
         </View>
+        <Button onPress={() => saveProfile()}>Save</Button>
       </ImageBackground>
     </View>
   );

@@ -1,13 +1,12 @@
 {
   "expo": {
-    "name": "eWorkFromHome",
-    "slug": "eWorkFromHome",
-    "version": "1.0.0",
+    "name": "e-WFH",
+    "slug": "e-WFH",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/AppIcon.png",
     "splash": {
-      "image": "./assets/Component 7 – 1@2x.png",
-      "resizeMode": "cover",
+      "image": "./assets/splash.png",
       "backgroundColor": "#ffffff"
     },
     "updates": {
@@ -23,8 +22,8 @@
       "favicon": "./assets/favicon.png"
     },
     "android": {
-      "package": "com.eWorkFromHome.eWorkFromHome",
-      "versionCode": 1,
+      "package": "com.eworkfromhome.eworkfromhome",
+      "versionCode": 3,
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     }
   }
