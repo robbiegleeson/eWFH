@@ -6,26 +6,26 @@ const theme = {
   roundness: 2,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#3498db',
+    primary: '#1689fc',
     accent: '#f1c40f',
     white: '#FFF',
-    grey: '#E5E7E9',
-    // text: '#FFF'
+    grey: '##F7F0F0',
+    lightGrey: '$#eff0f4'
   },
   center: {
     justifyContent: 'center',
     alignItems: 'center'
   },
   shadow: {
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 5,
+      height: 8,
     },
-    shadowOpacity: 0.2,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.58,
+    shadowRadius: 20.00,
 
-    elevation: 5,
+    elevation: 24,
   },
   root: {
     position: 'absolute',

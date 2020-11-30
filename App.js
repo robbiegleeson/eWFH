@@ -1,24 +1,26 @@
 import React from 'react';
-import { StyleSheet, View, StatusBar, Text, Image } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerListItem, DrawerItem } from '@react-navigation/drawer';
-import { Provider as PaperProvider, ActivityIndicator, Snackbar, List } from 'react-native-paper';
-import { useFonts } from 'expo-font'
+import { View, ActivityIndicator } from 'react-native';
 
-import HomeScreen from './src/screens/Home';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Provider as PaperProvider, Headline } from 'react-native-paper';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useFonts } from 'expo-font';
+import { BottomModalProvider } from 'react-native-bottom-modal';
+
+import HomeScreen from './src/screens/Home/index-v2.js';
 import ProfileScreen from './src/screens/Profile';
-import AboutScreen from './src/screens/About';
-import AddItem from './src/screens/AddItem';
 
 import theme from './src/theme';
 
-const Drawer = createDrawerNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   const [loaded] = useFonts({
     SourceSansPro: require('./assets/SourceSansPro-Regular.ttf'),
     SourceSansProBold: require('./assets/SourceSansPro-Bold.ttf')
   });
+  // const { showModal } = useBottomModal()
 
   // const{ isLoading } = useInitUser();
 
@@ -40,95 +42,51 @@ export default function App() {
     )
   }
 
-  function CustomDrawerContent(props) {
-    return (
-      <DrawerContentScrollView {...props}>
-        <DrawerListItem {...props} />
-        <DrawerItem
-          label="Help"
-          onPress={() => Linking.openURL('https://mywebsite.com/help')}
-          labelStyle={{ color: '#FFF'}}
-        />
-      </DrawerContentScrollView>
-    );
-  }
-
   return (
     <PaperProvider theme={theme}>
-      <NavigationContainer>
-        <Drawer.Navigator
-          initialRouteName="Home"
-          // hideStatusBar
-          drawerStyle={{
-            // backgroundColor: '#c6cbef',
-            borderTopRightRadius: 60,
-            borderBottomRightRadius: 60
-          }}
-          drawerContent={({ navigation }) => {
-            return (
-              <>
-                <View style={{ flex: 2, justifyContent: 'center', alignItems: 'center' }}>
-                  <View>
-                    <Image source={require('./assets/drawerIcon.png')} />
-                  </View>
-                </View>
-                <View style={{ flex: 3 }}>
-                  <List.Item
-                    title="Home"
-                    left={props => <List.Icon {...props} color="#1689FC" size={10} icon={require('./assets/profileIcon.png')} />}
-                    // right={props => <List.Icon {...props} icon={require('./assets/caret-right.png')}/>}
-                    style={{ fontSize: 16, borderBottomWidth: 0.5, borderBottomColor: '#1689FC'}}
-                    onPress={() => navigation.navigate('Home')}
-                  />
-                  <List.Item
-                    title="My Profile"
-                    left={props => <List.Icon {...props} color="#1689FC" size={10} icon="settings" />}
-                    // right={props => <List.Icon {...props} icon={require('./assets/caret-right.png')}/>}
-                    style={{ fontSize: 16, borderBottomWidth: 0.5, borderBottomColor: '#1689FC'}}
-                    onPress={() => navigation.navigate('Profile')}
-                  />
-                  <List.Item
-                    title="About"
-                    left={props => <List.Icon {...props} color="#1689FC" size={10} icon="information" />}
-                    // right={props => <List.Icon {...props} icon={require('./assets/caret-right.png')}/>}
-                    style={{ fontSize: 16, borderBottomWidth: 0.5, borderBottomColor: '#1689FC'}}
-                    onPress={() => navigation.navigate('About')}
-                  />
-                </View>
-              </>
-            )
-          }}
-        >
-          <Drawer.Screen
-            name="Home"
-            component={HomeScreen}
-          />
-          <Drawer.Screen
-            name="Profile"
-            component={ProfileScreen}
-          />
-          <Drawer.Screen
-            name="About"
-            component={AboutScreen}
-          />
-          <Drawer.Screen
-            name="AddItem"
-            component={AddItem}
-            options={{
-              drawerLabel: () => null
-          }}
-          />
-        </Drawer.Navigator>
-      </NavigationContainer>
+      <BottomModalProvider>
+        <NavigationContainer>
+          <Tab.Navigator
+            screenOptions={({ route }) => ({
+              tabBarIcon: ({ focused, color, size }) => {
+                let iconName;
+                let iconSize = size;
+
+                if (route.name === 'Dashboard') {
+                  iconName = focused
+                    ? 'ios-information-circle'
+                    : 'ios-information-circle-outline';
+                } else if (route.name === 'Profile') {
+                  iconName = focused ? 'ios-list-box' : 'ios-list';
+                } else if (route.name === 'Add') {
+                  iconName = 'ios-add';
+                  return (
+                    <View style={{ position: 'relative', top: -10, borderRadius: 25, backgroundColor: '#1689fc', width: 50 }}>
+                      <View style={{ left: '50%', top: '50%', transform: 'translate(-25%, -50%)' }}>
+                        <Ionicons name={iconName} size={50} color='#FFF' />
+                      </View>
+                    </View>
+                  );
+                }
+
+                // You can return any component that you like here!
+                return <Ionicons name={iconName} size={size} color={color} />;
+              },
+            })}
+            tabBarOptions={{
+              activeTintColor: '#1689fc',
+              inactiveTintColor: 'gray',
+            }}
+          >
+            <Tab.Screen name="Dashboard" component={HomeScreen} />
+            <Tab.Screen
+              name="Add"
+              component={HomeScreen}
+            />
+            <Tab.Screen name="Profile" component={ProfileScreen} />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </BottomModalProvider>
     </PaperProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
