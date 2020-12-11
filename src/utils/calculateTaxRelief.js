@@ -23,8 +23,6 @@ const calculateDailyRate = (month, settings) => {
 } 
 
 const calculateTaxRelief = (month, settings, amount) => {
-  console.log('made it')
-  console.log(settings)
   const totalHoursInMonth = moment().month(month).daysInMonth() * 24;
   const daysWorkedInMonth = settings?.daysPerMonthList[month] ?? [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   const totalHoursWorkedInMonth = Number(settings?.hoursPerDay) * daysWorkedInMonth;

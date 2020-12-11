@@ -8,9 +8,9 @@ const theme = {
     ...DefaultTheme.colors,
     primary: '#1689fc',
     accent: '#f1c40f',
-    white: '#FFF',
-    grey: '##F7F0F0',
-    lightGrey: '$#eff0f4'
+    // white: '#FFF',
+    // grey: '#F7F0F0',
+    // lightGrey: '#eff0f4'
   },
   center: {
     justifyContent: 'center',

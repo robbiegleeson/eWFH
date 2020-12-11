@@ -1,109 +1,95 @@
-import React, { useState } from 'react';
-import { View, ImageBackground, Image, Text, SectionList } from 'react-native';
-
-import Header from '../../components/Header';
-import DataCard from './components/DataCard/DataCard';
-import SummaryCard from './components/SummaryCard/SummaryCard';
-import { useTheme, Appbar } from 'react-native-paper';
+import React, { useState, useContext } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { FAB } from 'react-native-paper';
 import moment from 'moment';
-import AsyncStorage from '@react-native-community/async-storage';
-import saveItems from '../../utils/saveItem';
-import { useFocusEffect } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
 
-function HomeScreen({ navigation }) {
-  const [selectedDate, setSelectedDate] = useState(moment());
-  const [isFetching, setIsFetching] = useState(true);
-  const [userItems, setUserItems] = useState([]);
-  const [calculatedUtilityTotals, setCalculatedTotal] = useState(0);
-  const [key, setKey] = useState(`@${moment().year()}-data`)
+import Constants from 'expo-constants';
 
-  const { root, colors, image } = useTheme();
+import Search from './components/Search';
+import Welcome from './components/Welcome';
+import ExpenseList from './components/ExpenseList';
+import Overview from './components/Overview';
 
-  const img = require('../../../assets/app-background.png');
+import { InvoiceContext } from '../../contexts/invoiceContext';
 
-  const fetchUserItems = async () => {
-    setIsFetching(true);
+const statusBarHeight = Constants.statusBarHeight;
 
-    const allDataObj = await AsyncStorage.getItem(key);
-    const data = JSON.parse(allDataObj);
-    
-    if (data) {
-      setUserItems(data)
-      const totals = data.map(d => d.data.map(i => i.amount));
-      setCalculatedTotal(totals.flat().reduce((a, b) => Number(a) + Number(b), 0));
-    } else {
-      setUserItems([{ title: 'January', data: [] }, { title: 'Feburary', data: [] }, { title: 'March', data: [] }, { title: 'April', data: [] }, { title: 'May', data: [] }, { title: 'June', data: [] }, { title: 'July', data: [] }, { title: 'August', data: [] }, { title: 'September', data: [] }, { title: 'October', data: [] }, { title: 'November', data: [] }, { title: 'December', data: [] }]);
-      setCalculatedTotal(0.00);
-    }
+function HomeScreen() {
+  const [searchTerm, setSearchTerm] = useState();
+  const navigation = useNavigation();
+  const { invoiceContext } = useContext(InvoiceContext);
 
-    setIsFetching(false)
-  }
-
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchUserItems();
-
-      return () => {};
-    }, [selectedDate, JSON.stringify(userItems)])
-  );
-
-  const removeBill = async (id) => {
-    const updatedItems = userItems.filter(item => item.data = item.data.filter(d => d.id !== id));
-
-    saveItems(key, updatedItems)
-      .then(() => {
-        setUserItems(updatedItems);
-      })
-      .catch(e => alert(e.message))
+  const filterData = () => {
+    return invoiceContext.filter(item => {
+      if (!searchTerm) return true
+      if (
+        moment(item.date).format('MMMM').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
+        return true
+      }
+    })
   }
 
   return (
-    <View style={root}>
-      <ImageBackground resizeMode="stretch" source={img} style={image}>
-        <Header
-          leftAction={<Appbar.Action color={colors.white} icon={require('../../../assets/menu.png')} onPress={() => navigation.openDrawer()} />}
-          rightAction={<Appbar.Action color={colors.white} icon="plus" onPress={() => navigation.navigate('AddItem', { selectedDate })} />}
+    <View style={styles.root}>
+      <View style={styles.header}>
+        <Search setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
+      </View>
+      <View style={styles.welcome}>
+        <Welcome />
+      </View>
+      <View style={styles.dashboard}>
+        <Overview total={filterData().reduce((a, b) => a + b.amount, 0)} />
+      </View>
+      <View style={styles.content}>
+        <ExpenseList
+          data={filterData()}
         />
-        <View style={{  flex: 4 }}>
-          <View style={{ flex: 1, paddingHorizontal: 20 }}>
-            <SummaryCard
-              selectedDate={selectedDate}
-              setSelectedDate={(date) => {
-                setSelectedDate(date);
-                setKey(`@${date.year()}-data`)
-              }}
-              value={calculatedUtilityTotals}
-              key={key}
-            />
-          </View>
-          <View style={{ flex: 2, paddingVertical: 20}}>
-            <SectionList
-              sections={userItems}
-              keyExtractor={(item, index) => item + index}
-              renderItem={({ item, index }) => <DataCard otherProvider={item.otherProvider} id={item.id} provider={item.provider} amount={item.amount} removeBill={removeBill} />}
-              renderSectionHeader={({ section: { title } }) => (
-                <LinearGradient colors={['rgb(129, 200, 238)', 'rgb(22, 137, 252)']} style={{ backgroundColor: '#FFF', flex: 1, alignItems: 'flex-start', justifyContent: 'center', marginHorizontal: 20, borderRadius: 10}}>
-                  <Text style={{ color: '#FFF', paddingHorizontal: 20, paddingVertical: 10, fontSize: 18, }}>{title}</Text>
-                </LinearGradient>
-              )}
-              renderSectionFooter={(item) => {
-                if (!item.section.data.length) {
-                  return (
-                    <View style={{ alignItems: 'center', padding: 10 }}>
-                      <Text>No Data</Text>
-                    </View>
-                  )
-                }
-              }}
-              stickySectionHeadersEnabled
-            />
-          </View>
-          
-        </View>
-      </ImageBackground>
+      </View>
+      <FAB
+        color='#FFF'
+        style={styles.fab}
+        large
+        icon="plus"
+        onPress={() => navigation.navigate('AddExpense')}
+      />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  header: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingTop: statusBarHeight,
+  },
+  dashboard: {
+    flex: 2,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+  },
+  welcome: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  content: {
+    flex: 6,
+    justifyContent: 'flex-start',
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: '38%',
+    bottom: -10,
+    backgroundColor: '#1689fc'
+  },
+});
 
 export default HomeScreen;
