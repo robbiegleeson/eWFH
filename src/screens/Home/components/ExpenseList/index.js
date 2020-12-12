@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { IconButton } from 'react-native-paper';
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { InvoiceContext } from '../../../../contexts/invoiceContext';
+import Counter from '../../../../components/Counter';
 
 
 const Item = ({ title, category, amount, date, id, attachment }) => {
@@ -15,13 +16,13 @@ const Item = ({ title, category, amount, date, id, attachment }) => {
   const RightActions = (progress, dragX) => {
     const scale = dragX.interpolate({
       inputRange: [-100, 0],
-      outputRange: [0.7, 0]
+      outputRange: [1.5, 0]
     })
     return (
       <>
         <View style={{ backgroundColor: 'red', justifyContent: 'center' }}>
           <TouchableOpacity onPress={() => deleteInvoiceContext(id)}>
-            <Animated.Text
+            {/* <Animated.Text
               style={{
                 color: 'white',
                 paddingHorizontal: 10,
@@ -29,10 +30,15 @@ const Item = ({ title, category, amount, date, id, attachment }) => {
                 transform: [{ scale }]
               }}>
               Delete
-            </Animated.Text>
+            </Animated.Text> */}
+            <IconButton
+              icon="delete"
+              size={24}
+              color="#FFF"
+            />
           </TouchableOpacity>
         </View>
-        <View style={{ backgroundColor: 'green', justifyContent: 'center' }}>
+        {/* <View style={{ backgroundColor: 'green', justifyContent: 'center' }}>
           <Animated.Text
             style={{
               color: 'white',
@@ -42,14 +48,15 @@ const Item = ({ title, category, amount, date, id, attachment }) => {
             }}>
             Archive
           </Animated.Text>
-        </View>
+        </View> */}
       </>
     )
    }
 
   return (
     <Swipeable renderRightActions={RightActions}>
-      <TouchableOpacity onPress={() => navigation.navigate('Details', { item: { title, category, amount, date } })}>
+      {/* <TouchableOpacity onPress={() => navigation.navigate('Details', { item: { title, category, amount, date } })}> */}
+      <TouchableOpacity>
         <View style={styles.item}>
           <View style={{ flex: 4, justifyContent: 'center' }}>
             <Text style={styles.title}>{title}</Text>
@@ -69,7 +76,7 @@ const Item = ({ title, category, amount, date, id, attachment }) => {
             )} */}
           </View>
           <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
-            <Text style={styles.title}>{`€${(10 * (amount) / 100).toFixed(2)}`}</Text>
+            <Text style={styles.title}><Counter>{(10 * (amount) / 100)}</Counter></Text>
           </View>
         </View>
       </TouchableOpacity>

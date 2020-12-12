@@ -1,8 +1,9 @@
 import React from 'react';;
 import { StyleSheet, View, Text } from 'react-native';
 import { useTheme } from 'react-native-paper';
+import Counter from '../../../components/Counter';
 
-const Overview = ({ total }) => {
+const Overview = ({ total, taxRelief }) => {
   const { colors, shadow } = useTheme();
 
   return (
@@ -10,7 +11,7 @@ const Overview = ({ total }) => {
       <View style={styles.textContainer}>
         <Text style={[styles.title, { fontWeight: '200' }]}>
           <Text style={styles.smallText}>€</Text>
-          {`${Number(total.toFixed(2)).toLocaleString()}`}
+          <Counter>{total}</Counter>
         </Text>
         <Text style={styles.subtitle}>Total Expense</Text>
       </View>
@@ -18,7 +19,7 @@ const Overview = ({ total }) => {
       <View style={styles.textContainer}>
         <Text style={[styles.title, { color: colors.primary }]}>
           <Text style={styles.smallText}>€</Text>
-          {`${(10 * (total) / 100).toFixed(2).toLocaleString()}`}
+          <Counter>{taxRelief}</Counter>
         </Text>
         <Text style={styles.subtitle}>Total Tax Relief</Text>
       </View>

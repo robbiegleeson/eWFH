@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
-import { Button, TextInput, Chip } from 'react-native-paper';
+import { Button, TextInput, Chip, HelperText } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import Constants from 'expo-constants';
 import moment from 'moment';
@@ -19,11 +19,13 @@ const AddExpense = () => {
   const [fileData, setFileData] = useState();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [date, setDate] = useState(new Date());
+  const [categories, setCategories] = useState([]);
+  const [providers, setProviders] = useState([]);
+  const [errors, setErrors] = useState();
 
   const navigation = useNavigation();
 
-  const [categories, setCategories] = useState([]);
-  const [providers, setProviders] = useState([]);
+  const { addInvoiceContext } = useContext(InvoiceContext);
 
   useEffect(() => {
     const getLocalData = async () => {
@@ -45,9 +47,30 @@ const AddExpense = () => {
     getLocalData();
   }, []);
 
-  const { addInvoiceContext } = useContext(InvoiceContext);
-
   const onSubmit = async () => {
+    const reg = new RegExp('^[0-9]+$');
+
+    if (text === '') {
+      return setErrors({
+        provider: `Provider must not be empty`,
+        ...errors,
+      });
+    }
+
+    if (category === '') {
+      return setErrors({
+        category: `Category must not be empty`,
+        ...errors,
+      });
+    }
+
+    if (!reg.test(amount)) {
+      return setErrors({
+        amount: `Amount must only contain numbers`,
+        ...errors,
+      });
+    }
+
     addInvoiceContext({
       title: text,
       category,
@@ -91,7 +114,7 @@ const AddExpense = () => {
     setShowDatePicker(false);
   };
 
-  const getChips = (array, match) => {
+  const getChips = (array, match, action) => {
     if (!match && array.length >= 0) {
       return (
         <View style={{ flexDirection: 'row' }}>
@@ -100,7 +123,7 @@ const AddExpense = () => {
             .map((item) => (
               <Chip
                 key={Math.random()}
-                onPress={() => setText(item)}
+                onPress={() => action(item)}
                 style={styles.chip}
               >
                 {item}
@@ -117,7 +140,7 @@ const AddExpense = () => {
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: statusBarHeight }}>
         <Text>New Expense</Text>
       </View>
-      <View style={{ flex: 4, backgroundColor: '#FFF' }}>
+      <View style={{ flex: 9, backgroundColor: '#FFF' }}>
         <TextInput
           label="Provider"
           value={text}
@@ -125,7 +148,12 @@ const AddExpense = () => {
           style={styles.textInput}
           underlineColor="#eff0f4"
         />
-        {getChips(providers, text)}
+        {errors?.provider && (
+          <HelperText type="error" visible={true}>
+            Please specify a provider
+          </HelperText>
+        )}
+        {getChips(providers, text, setText)}
         <TextInput
           label="Category"
           value={category}
@@ -133,7 +161,12 @@ const AddExpense = () => {
           style={styles.textInput}
           underlineColor="#eff0f4"
         />
-        {getChips(categories, category)}
+        {errors?.category && (
+          <HelperText type="error" visible={true}>
+            Please specify a category
+          </HelperText>
+        )}
+        {getChips(categories, category, setCategory)}
         <TextInput
           label="Amount"
           value={amount}
@@ -141,6 +174,11 @@ const AddExpense = () => {
           style={styles.textInput}
           underlineColor="#eff0f4"
         />
+        {errors?.amount && (
+          <HelperText type="error" visible={true}>
+            Amount must be a number
+          </HelperText>
+        )}
         <TouchableOpacity onPress={() => setShowDatePicker(true)}>
           <View style={styles.button}>
             <Text style={{ color: 'grey' }}>{moment(date).format('DD/MM/YYYY')}</Text>
@@ -163,14 +201,14 @@ const AddExpense = () => {
         )}
         <View style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 20 }}>
           <Button
-            style={{ flex: 1, marginHorizontal: 5 }}
+            style={{ flex: 1, marginHorizontal: 5, borderRadius: 10 }}
             mode="contained"
             onPress={() => navigation.navigate('HomePage')}
           >
             Cancel
           </Button>
           <Button
-            style={{ flex: 1, marginHorizontal: 5 }}
+            style={{ flex: 1, marginHorizontal: 5, borderRadius: 10 }}
             mode="contained"
             onPress={onSubmit}
           >

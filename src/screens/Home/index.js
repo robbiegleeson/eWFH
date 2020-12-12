@@ -33,17 +33,22 @@ function HomeScreen() {
     })
   }
 
+  const runningTotal = filterData().reduce((a, b) => a + b.amount, 0);
+  const taxRelief = (10 * (runningTotal) / 100).toLocaleString()
+
+  console.log(runningTotal)
+
   return (
     <View style={styles.root}>
       <View style={styles.header}>
         <Search setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
-      </View>
-      <View style={styles.welcome}>
         <Welcome />
+        <Overview total={runningTotal} taxRelief={taxRelief} />
+      </View>
+      {/* <View style={styles.welcome}>
       </View>
       <View style={styles.dashboard}>
-        <Overview total={filterData().reduce((a, b) => a + b.amount, 0)} />
-      </View>
+      </View> */}
       <View style={styles.content}>
         <ExpenseList
           data={filterData()}
@@ -80,7 +85,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   content: {
-    flex: 6,
+    flex: 2,
     justifyContent: 'flex-start',
   },
   fab: {
