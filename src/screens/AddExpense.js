@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, FlatList } from 'react-native';
 import { Button, TextInput, Chip, HelperText } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import Constants from 'expo-constants';
@@ -48,7 +48,7 @@ const AddExpense = () => {
   }, []);
 
   const onSubmit = async () => {
-    const reg = new RegExp('^[0-9]+$');
+    const reg = /^[0-9]+([,.][0-9]+)?$/g;
 
     if (text === '') {
       return setErrors({

@@ -4,7 +4,6 @@ const easeOutQuad = t => t * ( 2 - t );
 const frameDuration = 1000 / 60;
 
 const Counter = ({ children, duration = 1200 }) => {
-  console.log(children)
   const countTo = children;
   const [ count, setCount ] = useState( 0 );
 

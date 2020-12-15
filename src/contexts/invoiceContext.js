@@ -5,6 +5,7 @@ export const InvoiceContext = createContext(null);
 
 export const InvoiceProvider = ({ children }) => {
   const [invoiceContext, setInvoiceContext] = useState([]);
+  const [ready, setIsReady] = useState(false);
 
   useEffect(() => {
     const fetchInvoices = async () => {
@@ -37,7 +38,7 @@ export const InvoiceProvider = ({ children }) => {
   }
 
   return (
-    <InvoiceContext.Provider value={{ invoiceContext, addInvoiceContext, deleteInvoiceContext }}>
+    <InvoiceContext.Provider value={{ invoiceContext, addInvoiceContext, deleteInvoiceContext, ready, setIsReady }}>
       {children}
     </InvoiceContext.Provider>
   );

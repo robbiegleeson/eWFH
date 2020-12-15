@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar, TouchableOpacity, Animated } from 'react-native';
 import moment from 'moment';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { sortBy, reverse } from 'lodash';
 import { useNavigation } from '@react-navigation/native';
 import { IconButton } from 'react-native-paper';
 import Swipeable from 'react-native-gesture-handler/Swipeable'
@@ -10,7 +10,6 @@ import Counter from '../../../../components/Counter';
 
 
 const Item = ({ title, category, amount, date, id, attachment }) => {
-  const navigation = useNavigation();
   const { deleteInvoiceContext } = useContext(InvoiceContext);
 
   const RightActions = (progress, dragX) => {
@@ -22,7 +21,7 @@ const Item = ({ title, category, amount, date, id, attachment }) => {
       <>
         <View style={{ backgroundColor: 'red', justifyContent: 'center' }}>
           <TouchableOpacity onPress={() => deleteInvoiceContext(id)}>
-            {/* <Animated.Text
+            <Animated.Text
               style={{
                 color: 'white',
                 paddingHorizontal: 10,
@@ -30,32 +29,15 @@ const Item = ({ title, category, amount, date, id, attachment }) => {
                 transform: [{ scale }]
               }}>
               Delete
-            </Animated.Text> */}
-            <IconButton
-              icon="delete"
-              size={24}
-              color="#FFF"
-            />
+            </Animated.Text>
           </TouchableOpacity>
         </View>
-        {/* <View style={{ backgroundColor: 'green', justifyContent: 'center' }}>
-          <Animated.Text
-            style={{
-              color: 'white',
-              paddingHorizontal: 10,
-              fontWeight: '600',
-              transform: [{ scale }]
-            }}>
-            Archive
-          </Animated.Text>
-        </View> */}
       </>
     )
    }
 
   return (
     <Swipeable renderRightActions={RightActions}>
-      {/* <TouchableOpacity onPress={() => navigation.navigate('Details', { item: { title, category, amount, date } })}> */}
       <TouchableOpacity>
         <View style={styles.item}>
           <View style={{ flex: 4, justifyContent: 'center' }}>
@@ -71,9 +53,6 @@ const Item = ({ title, category, amount, date, id, attachment }) => {
                 />
               )}
             </View>
-            {/* {attachment && (
-              
-            )} */}
           </View>
           <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
             <Text style={styles.title}><Counter>{(10 * (amount) / 100)}</Counter></Text>
@@ -93,27 +72,19 @@ const ExpenseList = ({ data }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { borderTopRightRadius: 20, borderTopLeftRadius: 20 }]}>
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row' }}>
             <View style={{ flex: 1, justifyContent: 'center' }}>
               <Text style={styles.headingText}>Latest Items</Text>
             </View>
             <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 10, alignItems: 'flex-end' }}>
-            {/* <IconButton
-              icon="calendar"
-              size={20}
-              onPress={() => navigation.navigate('DateFilter')}
-            /> */}
             </View>
           </View>
         </View>
-        {/* <View style={{ flex: 1, alignContent: 'flex-end', justifyContent: 'center' }}>
-          <Ionicons name="ios-list" size={24} color='#000' />
-        </View> */}
       </View>
       <FlatList
-        data={data}
+        data={reverse(sortBy(data, (item) => item.date))}
         renderItem={renderItem}
         keyExtractor={item => item.id}
       />
@@ -127,7 +98,7 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight || 20,
   },
   header: {
-    width: '180%',
+    // width: '180%',
     padding: 20,
     backgroundColor: '#FFF',
     flexDirection: 'row',
