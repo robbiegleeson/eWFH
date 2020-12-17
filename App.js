@@ -1,134 +1,95 @@
-import React from 'react';
-import { StyleSheet, View, StatusBar, Text, Image } from 'react-native';
+import React, { useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { Image, StyleSheet } from 'react-native';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerListItem, DrawerItem } from '@react-navigation/drawer';
-import { Provider as PaperProvider, ActivityIndicator, Snackbar, List } from 'react-native-paper';
-import { useFonts } from 'expo-font'
+import { createStackNavigator } from '@react-navigation/stack';
+import { useFonts } from 'expo-font';
+import Onboarding from 'react-native-onboarding-swiper';
+import AsyncStorage from '@react-native-community/async-storage';
+import * as SplashScreen from 'expo-splash-screen';
 
 import HomeScreen from './src/screens/Home';
-import ProfileScreen from './src/screens/Profile';
-import AboutScreen from './src/screens/About';
-import AddItem from './src/screens/AddItem';
+import AddExpense from './src/screens/AddExpense';
+
+import { InvoiceProvider } from './src/contexts/invoiceContext.js';
 
 import theme from './src/theme';
+import useOnboarding from './src/hooks/useOnboarding';
+import image from './assets/cal-lg.png';
 
-const Drawer = createDrawerNavigator();
+const Stack = createStackNavigator();
 
 export default function App() {
-  const [loaded] = useFonts({
+  const { isOnboarded, setIsOnboarded } = useOnboarding();
+
+  useFonts({
     SourceSansPro: require('./assets/SourceSansPro-Regular.ttf'),
     SourceSansProBold: require('./assets/SourceSansPro-Bold.ttf')
   });
 
-  // const{ isLoading } = useInitUser();
+  const setOnboarded = () => {
+    AsyncStorage.setItem('@e-wfh-onboarded', JSON.stringify(true));
+    setIsOnboarded(true)
+  }
 
-  if (!loaded) {
+  useEffect(() => {
+    SplashScreen.preventAutoHideAsync();
+  }, []);
+
+  if (!isOnboarded) {
     return (
-      <View style={{
-        position: 'absolute',
-        top: 0, 
-        left: 0,
-        bottom: 0,
-        right: 0,
-        backgroundColor: '#E5E7E9',
-        display: 'flex'
-      }}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator animating={true} color="#3498db" />
-        </View>
-      </View>
+      <Onboarding
+        showSkip={false}
+        onDone={() => setOnboarded()}
+        pages={[
+          {
+            backgroundColor: '#fff',
+            image:  <Image source={image} style={styles.image} />,
+            title: 'Welcome to eWFH',
+            subtitle: 'Track your expenses while working from home',
+          },
+          {
+            backgroundColor: '#fe6e58',
+            image:  <Image source={image} style={styles.image} />,
+            title: 'Track your Tax Relief',
+            subtitle: 'View total tax relief available',
+          },
+          {
+            backgroundColor: '#999',
+            image:  <Image source={image} style={styles.image} />,
+            title: 'Claim Your Tax Relief',
+            subtitle: "Download your expenses using eWFH and submit your claim to Revenue",
+          },
+        ]}
+      />
     )
   }
 
-  function CustomDrawerContent(props) {
-    return (
-      <DrawerContentScrollView {...props}>
-        <DrawerListItem {...props} />
-        <DrawerItem
-          label="Help"
-          onPress={() => Linking.openURL('https://mywebsite.com/help')}
-          labelStyle={{ color: '#FFF'}}
-        />
-      </DrawerContentScrollView>
-    );
-  }
-
   return (
-    <PaperProvider theme={theme}>
-      <NavigationContainer>
-        <Drawer.Navigator
-          initialRouteName="Home"
-          // hideStatusBar
-          drawerStyle={{
-            // backgroundColor: '#c6cbef',
-            borderTopRightRadius: 60,
-            borderBottomRightRadius: 60
-          }}
-          drawerContent={({ navigation }) => {
-            return (
-              <>
-                <View style={{ flex: 2, justifyContent: 'center', alignItems: 'center' }}>
-                  <View>
-                    <Image source={require('./assets/drawerIcon.png')} />
-                  </View>
-                </View>
-                <View style={{ flex: 3 }}>
-                  <List.Item
-                    title="Home"
-                    left={props => <List.Icon {...props} color="#1689FC" size={10} icon={require('./assets/profileIcon.png')} />}
-                    // right={props => <List.Icon {...props} icon={require('./assets/caret-right.png')}/>}
-                    style={{ fontSize: 16, borderBottomWidth: 0.5, borderBottomColor: '#1689FC'}}
-                    onPress={() => navigation.navigate('Home')}
-                  />
-                  <List.Item
-                    title="My Profile"
-                    left={props => <List.Icon {...props} color="#1689FC" size={10} icon="settings" />}
-                    // right={props => <List.Icon {...props} icon={require('./assets/caret-right.png')}/>}
-                    style={{ fontSize: 16, borderBottomWidth: 0.5, borderBottomColor: '#1689FC'}}
-                    onPress={() => navigation.navigate('Profile')}
-                  />
-                  <List.Item
-                    title="About"
-                    left={props => <List.Icon {...props} color="#1689FC" size={10} icon="information" />}
-                    // right={props => <List.Icon {...props} icon={require('./assets/caret-right.png')}/>}
-                    style={{ fontSize: 16, borderBottomWidth: 0.5, borderBottomColor: '#1689FC'}}
-                    onPress={() => navigation.navigate('About')}
-                  />
-                </View>
-              </>
-            )
-          }}
-        >
-          <Drawer.Screen
-            name="Home"
-            component={HomeScreen}
-          />
-          <Drawer.Screen
-            name="Profile"
-            component={ProfileScreen}
-          />
-          <Drawer.Screen
-            name="About"
-            component={AboutScreen}
-          />
-          <Drawer.Screen
-            name="AddItem"
-            component={AddItem}
-            options={{
-              drawerLabel: () => null
-          }}
-          />
-        </Drawer.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+    <InvoiceProvider>
+      <PaperProvider theme={theme}>
+        <StatusBar style="dark" />
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false
+            }}
+          >
+            <Stack.Screen name="HomePage" component={HomeScreen} />
+            <Stack.Screen name="AddExpense" component={AddExpense} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
+    </InvoiceProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  image: {
+    height: 45,
+    width: 45,
+    borderRadius: 22.5,
+    marginLeft: 10
   },
 });
