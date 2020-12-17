@@ -23,7 +23,7 @@
     },
     "android": {
       "package": "com.eworkfromhome.eworkfromhome",
-      "versionCode": 4,
+      "versionCode": 5,
       "permissions": [
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
