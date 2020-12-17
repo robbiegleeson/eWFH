@@ -1,4 +1,3 @@
-import { Platform } from 'react-native';
 import { DefaultTheme } from 'react-native-paper';
 
 const theme = {
@@ -8,9 +7,6 @@ const theme = {
     ...DefaultTheme.colors,
     primary: '#1689fc',
     accent: '#f1c40f',
-    // white: '#FFF',
-    // grey: '#F7F0F0',
-    // lightGrey: '#eff0f4'
   },
   center: {
     justifyContent: 'center',
@@ -24,8 +20,6 @@ const theme = {
     },
     shadowOpacity: 0.58,
     shadowRadius: 20.00,
-
-    elevation: 24,
   },
   root: {
     position: 'absolute',

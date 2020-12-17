@@ -1,8 +1,7 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { View, StyleSheet, Platform, KeyboardAvoidingView, Keyboard, Image } from 'react-native';
+import React, { useState, useContext, useEffect, useRef } from 'react';
+import { View, StyleSheet, Platform, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { FAB } from 'react-native-paper';
 import moment from 'moment';
-import { useNavigation } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 
 import Constants from 'expo-constants';
@@ -14,7 +13,8 @@ import Overview from './components/Overview';
 
 import { InvoiceContext } from '../../contexts/invoiceContext';
 import generateDownloadFile from '../../utils/generateDownloadFile';
-import splash from '../../../assets/splash.png'
+import { Modalize } from 'react-native-modalize';
+import AddExpense from '../AddExpense';
 
 const statusBarHeight = Constants.statusBarHeight;
 
@@ -22,14 +22,16 @@ function HomeScreen() {
   const [searchTerm, setSearchTerm] = useState();
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [state, setState] = React.useState({ open: false });
+  const [state, setState] = useState({ open: false });
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const { invoiceContext } = useContext(InvoiceContext);
+
+  const modalizeRef = useRef(null);
 
   const onStateChange = ({ open }) => setState({ open });
 
   const { open } = state;
-
-  const navigation = useNavigation();
-  const { invoiceContext } = useContext(InvoiceContext);
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
@@ -42,14 +44,11 @@ function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    const setSplashScreen = async () => {
-      setTimeout(() => {
-        SplashScreen.hideAsync();
+    setTimeout(() => {
+      SplashScreen.hideAsync().then(() => {
         setLoaded(true);
-      }, 3000)
-    }
-
-    setSplashScreen()
+      });
+    }, 3000)
   }, []);
 
   const _keyboardDidShow = () => {
@@ -59,6 +58,16 @@ function HomeScreen() {
   const _keyboardDidHide = () => {
     setKeyboardOpen(false);
   };
+
+  const onOpen = () => {
+    modalizeRef.current?.open();
+    setModalOpen(true);
+  };
+
+  const onClose = () => {
+    setModalOpen(false);
+    modalizeRef.current?.close();
+  }
 
   const filterData = () => {
     return invoiceContext.filter(item => {
@@ -102,16 +111,24 @@ function HomeScreen() {
           />
         </View>
       </View>
-      <FAB.Group
-        open={open}
-        icon={open ? 'close' : 'plus'}
-        actions={[
-          { icon: 'plus', onPress: () => navigation.navigate('AddExpense') },
-          { icon: 'download', onPress: () => generateDownloadFile() },
-        ]}
-        onStateChange={onStateChange}
-        fabStyle={styles.fab}
-      />
+      <Modalize
+        onClosed={() => setModalOpen(false)}
+        ref={modalizeRef}
+      >
+        <AddExpense closeModal={onClose} />
+      </Modalize>
+      {!modalOpen && (
+        <FAB.Group
+          open={open}
+          icon={open ? 'close' : 'plus'}
+          actions={[
+            { icon: 'plus', onPress: onOpen },
+            { icon: 'download', onPress: () => generateDownloadFile() },
+          ]}
+          onStateChange={onStateChange}
+          fabStyle={styles.fab}
+        />
+      )}
     </KeyboardAvoidingView>
   </>
   );
@@ -120,8 +137,6 @@ function HomeScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    // backgroundColor: '#1689fc'
-    // height: '100%',
   },
   header: {
     flex: 1,
@@ -133,20 +148,16 @@ const styles = StyleSheet.create({
     flex: 2,
     paddingHorizontal: 20,
     justifyContent: 'center',
-    paddingTop: statusBarHeight,
   },
   welcome: {
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingBottom: 20
   },
   content: {
-    // flex: 8,
     justifyContent: 'flex-start',
   },
   fab: {
-    position: 'absolute',
-    margin: 16,
-    right: '38%',
     bottom: -10,
     backgroundColor: '#1689fc'
   },

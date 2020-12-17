@@ -1,8 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, FlatList } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { Button, TextInput, Chip, HelperText } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import Constants from 'expo-constants';
 import moment from 'moment';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
@@ -10,9 +8,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { InvoiceContext } from '../contexts/invoiceContext';
 
-const statusBarHeight = Constants.statusBarHeight;
-
-const AddExpense = () => {
+const AddExpense = ({ closeModal }) => {
   const [text, setText] = useState('');
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState('');
@@ -22,9 +18,6 @@ const AddExpense = () => {
   const [categories, setCategories] = useState([]);
   const [providers, setProviders] = useState([]);
   const [errors, setErrors] = useState();
-
-  const navigation = useNavigation();
-
   const { addInvoiceContext } = useContext(InvoiceContext);
 
   useEffect(() => {
@@ -93,7 +86,7 @@ const AddExpense = () => {
       setProviders(updatedProviders);
     }
 
-    navigation.navigate('HomePage');
+    closeModal();
   };
 
   const handleFileUpload = () => {
@@ -117,7 +110,7 @@ const AddExpense = () => {
   const getChips = (array, match, action) => {
     if (!match && array.length >= 0) {
       return (
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           {
             array.filter((type) => !type.toLowerCase().includes(match.toLowerCase))
             .map((item) => (
@@ -137,8 +130,8 @@ const AddExpense = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: statusBarHeight }}>
-        <Text>New Expense</Text>
+      <View style={{ backgroundColor: '#1689fc', flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, borderTopRightRadius: 10, borderTopLeftRadius: 10 }}>
+        <Text style={{ color: '#FFF', fontSize: 18 }}>New Expense</Text>
       </View>
       <View style={{ flex: 9, backgroundColor: '#FFF' }}>
         <TextInput
@@ -199,11 +192,13 @@ const AddExpense = () => {
             onChange={onDateChange}
           />
         )}
+      </View>
+      <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 20 }}>
           <Button
             style={{ flex: 1, marginHorizontal: 5, borderRadius: 10 }}
             mode="contained"
-            onPress={() => navigation.navigate('HomePage')}
+            onPress={closeModal}
           >
             Cancel
           </Button>

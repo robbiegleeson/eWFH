@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { Image, StyleSheet, TextInput, View, Text } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { Image, StyleSheet } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -9,9 +10,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
 
 import HomeScreen from './src/screens/Home';
-import Details from './src/screens/Details';
 import AddExpense from './src/screens/AddExpense';
-import DateRangeFilter from './src/screens/Home/components/DateRangeFilter';
 
 import { InvoiceProvider } from './src/contexts/invoiceContext.js';
 
@@ -22,7 +21,7 @@ import image from './assets/cal-lg.png';
 const Stack = createStackNavigator();
 
 export default function App() {
-  const { isLoading, isOnboarded, setIsOnboarded } = useOnboarding();
+  const { isOnboarded, setIsOnboarded } = useOnboarding();
 
   useFonts({
     SourceSansPro: require('./assets/SourceSansPro-Regular.ttf'),
@@ -35,8 +34,8 @@ export default function App() {
   }
 
   useEffect(() => {
-    SplashScreen.preventAutoHideAsync()
-  }, [])
+    SplashScreen.preventAutoHideAsync();
+  }, []);
 
   if (!isOnboarded) {
     return (
@@ -62,18 +61,6 @@ export default function App() {
             title: 'Claim Your Tax Relief',
             subtitle: "Download your expenses using eWFH and submit your claim to Revenue",
           },
-          // {
-          //   backgroundColor: '#fff',
-          //   image:  <Image source={image} style={styles.image} />,
-          //   title: (
-          //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          //       <Image source={image} style={styles.image} />
-          //       <Text>What's your name?</Text>
-          //       <TextInput onChangeText={(value) => setName(value)} value={name} />
-          //     </View>
-          //   ),
-          //   subtitle: "Download your expenses using eWFH and submit your claim to Revenue",
-          // },
         ]}
       />
     )
@@ -82,6 +69,7 @@ export default function App() {
   return (
     <InvoiceProvider>
       <PaperProvider theme={theme}>
+        <StatusBar style="dark" />
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
@@ -89,9 +77,7 @@ export default function App() {
             }}
           >
             <Stack.Screen name="HomePage" component={HomeScreen} />
-            <Stack.Screen name="Details" component={Details} />
             <Stack.Screen name="AddExpense" component={AddExpense} />
-            <Stack.Screen name="DateFilter" component={DateRangeFilter} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

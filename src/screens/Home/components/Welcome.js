@@ -3,14 +3,13 @@ import { Image, Text, View, StyleSheet } from 'react-native';
 
 import image from '../../../../assets/cal-lg.png';
 
-const Welcome = ({ title, subtitle }) => {
+const Welcome = ({ subtitle }) => {
   return (
     <View style={styles.container}>
       <View>
         <Image source={image} style={styles.image} />
       </View>
       <View style={{ padding: 20}}>
-        <Text style={styles.titleText}>{`Hi ${title}`}</Text>
         <Text style={styles.subTitleText}>{subtitle}</Text>
       </View>
     </View>
@@ -18,7 +17,6 @@ const Welcome = ({ title, subtitle }) => {
 };
 
 Welcome.defaultProps = {
-  title: 'Rob',
   subtitle: 'Here\'s your e-Work from home summary',
 };
 
