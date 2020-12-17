@@ -33,9 +33,9 @@ export default function App() {
     setIsOnboarded(true)
   }
 
-  useEffect(() => {
-    SplashScreen.preventAutoHideAsync();
-  }, []);
+  // useEffect(() => {
+  //   SplashScreen.preventAutoHideAsync();
+  // }, []);
 
   if (!isOnboarded) {
     return (

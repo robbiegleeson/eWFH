@@ -44,11 +44,9 @@ function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      SplashScreen.hideAsync().then(() => {
-        setLoaded(true);
-      });
-    }, 3000)
+    SplashScreen.hideAsync().then(() => {
+      setLoaded(true);
+    });
   }, []);
 
   const _keyboardDidShow = () => {
@@ -84,10 +82,6 @@ function HomeScreen() {
 
   const runningTotal = filterData().reduce((a, b) => a + b.amount, 0);
   const taxRelief = (10 * (runningTotal) / 100).toLocaleString()
-
-  if (!loaded) {
-    return null;
-  }
 
   return (
     <>
